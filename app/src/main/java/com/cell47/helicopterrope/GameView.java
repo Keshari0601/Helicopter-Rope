@@ -22,18 +22,27 @@ public class GameView extends SurfaceView {
     //local objects
     public boolean isCompleted=false;
 
-
     public List<RopeSectionDX> RopeSectionList=new ArrayList<>();
     public Helicopter helicopter=new Helicopter();
-
+    public Gravity gravity;
+    public Drag drag;
+    public Elastic elastic;
+    public int sizeOfRopeList;
+    public static int calculationPerFrame=10;
     GameView(MainActivity context) {
         super(context);
         activity=context;
 
+        //gravity, speed of helicopter, drag constant, elasticity constant
+        gravity=new Gravity(Constant.gravityX,Constant.gravityY);
+        drag=new Drag(Constant.dragConstant);
+        elastic =new Elastic(Constant.elasticConstant);
+        double speed=Constant.helicopterSpeed;
 
-
-        RopeSectionList.add(new RopeSectionDX(450,800,100,100));
-
+        for(int i=0;i<15;i++){
+            RopeSectionList.add(new RopeSectionDX(800+20*i,100,10,Constant.mass,speed));
+        }
+        sizeOfRopeList=RopeSectionList.size();
         //Holder Set
         holder = getHolder();
         this.setZOrderOnTop(true);
@@ -64,8 +73,18 @@ public class GameView extends SurfaceView {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             canvas.scale(activity.scaleX,activity.scaleY);
             canvas.translate(activity.translateX, activity.translateY);
-            for (RopeSectionDX ropeSection:RopeSectionList){
-                ropeSection.update();
+            helicopter.draw(canvas);
+            for (int i=0;i<calculationPerFrame;i++) {
+                int previousIndex = -1, nextIndex = 1;
+                for (RopeSectionDX ropeSection : RopeSectionList) {
+                    RopeSectionDX preRope = previousIndex < 0 ? null : RopeSectionList.get(previousIndex);
+                    RopeSectionDX nextRope = nextIndex >= sizeOfRopeList ? null : RopeSectionList.get(nextIndex);
+                    ropeSection.update(drag, gravity, elastic, preRope, nextRope);
+                    previousIndex++;
+                    nextIndex++;
+                }
+            }
+            for (RopeSectionDX ropeSection:RopeSectionList) {
                 ropeSection.draw(canvas);
             }
         }
