@@ -20,4 +20,16 @@ public class Elastic {
         double ay=k*distance*uy;
         return new AccelerationVector(ax, ay);
     }
+
+    public void positionCorrection(RopeSectionDX preRope, RopeSectionDX ropeSectionDX) {
+        double dx= ropeSectionDX.centerX-preRope.centerX,
+                dy= ropeSectionDX.centerY-preRope.centerY;
+        double ux,uy;
+        double modDSquare=dx*dx+dy*dy;
+        double modD= Math.sqrt(modDSquare);
+        ux=dx/modD;
+        uy=dy/modD;
+        ropeSectionDX.centerX=preRope.centerX+(ropeSectionDX.radius+ preRope.radius)*ux;
+        ropeSectionDX.centerY=preRope.centerY+(ropeSectionDX.radius+ preRope.radius)*uy;
+    }
 }

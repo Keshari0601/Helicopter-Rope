@@ -2,6 +2,8 @@ package com.cell47.helicopterrope;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.view.SurfaceHolder;
@@ -24,23 +26,25 @@ public class GameView extends SurfaceView {
 
     public List<RopeSectionDX> RopeSectionList=new ArrayList<>();
     public Helicopter helicopter=new Helicopter();
-    public Gravity gravity;
+    //public Gravity gravity;
     public Drag drag;
     public Elastic elastic;
     public int sizeOfRopeList;
-    public static int calculationPerFrame=10;
+    public static int calculationPerFrame=2;
     GameView(MainActivity context) {
         super(context);
         activity=context;
 
         //gravity, speed of helicopter, drag constant, elasticity constant
-        gravity=new Gravity(Constant.gravityX,Constant.gravityY);
-        drag=new Drag(Constant.dragConstant);
+        //gravity=new Gravity(Constant.gravityX,Constant.gravityY);
+        drag=new Drag();
         elastic =new Elastic(Constant.elasticConstant);
-        double speed=Constant.helicopterSpeed;
 
-        for(int i=0;i<15;i++){
-            RopeSectionList.add(new RopeSectionDX(800+20*i,100,10,Constant.mass,speed));
+        RopeSectionDX.redPaint = new Paint();
+        RopeSectionDX.redPaint.setStyle(Paint.Style.FILL);
+        RopeSectionDX.redPaint.setColor(Color.WHITE);
+        for(int i=0;i<30;i++){
+            RopeSectionList.add(new RopeSectionDX(800+20*i,250,10));
         }
         sizeOfRopeList=RopeSectionList.size();
         //Holder Set
@@ -79,7 +83,7 @@ public class GameView extends SurfaceView {
                 for (RopeSectionDX ropeSection : RopeSectionList) {
                     RopeSectionDX preRope = previousIndex < 0 ? null : RopeSectionList.get(previousIndex);
                     RopeSectionDX nextRope = nextIndex >= sizeOfRopeList ? null : RopeSectionList.get(nextIndex);
-                    ropeSection.update(drag, gravity, elastic, preRope, nextRope);
+                    ropeSection.update(drag, elastic, preRope, nextRope);
                     previousIndex++;
                     nextIndex++;
                 }

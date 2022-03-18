@@ -12,6 +12,6 @@ public class Helicopter {
         redPaint.setStyle(Paint.Style.FILL);
     }
     public void draw(Canvas canvas){
-        canvas.drawRect(sx,sy,ex,ey,redPaint);
+        //canvas.drawRect(sx,sy,ex,ey,redPaint);
     }
 }
